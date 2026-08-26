@@ -21,7 +21,7 @@ def transpose_kernel(
     a_mask = (offset_m[:,None] < M) and (offset_n[None,:] < N)
     a = tl.load(a_ptrs, mask = a_mask, other = 0.0)
 
-    out_ptrs = out_ptr + offset_n[None,:] * stride_om + offset_m[:,None] * stride_on
+    out_ptrs = out_ptr + offset_m[:,None] * stride_on + offset_n[None,:] * stride_om 
     tl.store(out_ptrs, a, mask = a_mask)
     
 def solve(A: torch.Tensor, out: torch.Tensor) -> None:
