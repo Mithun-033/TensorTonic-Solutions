@@ -1,0 +1,1 @@
+SELECT name,salary from employees WHERE salary > 70000 AND department IN ('Engineering', 'Marketing');
