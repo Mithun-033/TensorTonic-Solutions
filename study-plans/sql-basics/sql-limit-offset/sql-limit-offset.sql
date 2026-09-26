@@ -1,0 +1,1 @@
+SELECT product, revenue, sale_date from sales ORDER BY revenue DESC, sale_date ASC LIMIT 3 OFFSET 1;
