@@ -66,6 +66,7 @@ Verified machine learning implementations completed on [TensorTonic](https://www
 | Self Join | Use a SQL self join to pair users with their referrers while labeling organic signups without a referral. | https://www.tensortonic.com/problems/sql-self-join |
 | WHERE Clauses | Filter employees by department and salary with SQL WHERE conditions, returning only qualifying names and salaries. | https://www.tensortonic.com/problems/sql-where-clauses |
 | Implement Swish Activation | Apply the Swish activation element-wise by multiplying each input by its sigmoid value. | https://www.tensortonic.com/problems/swish-activation |
+| Tanh | Implement hyperbolic tangent activation in CUDA with one thread per element, device intrinsic math, and bounds checks. | https://www.tensortonic.com/problems/tanh |
 | Implement Tanh Activation | Implement the hyperbolic tangent activation element-wise with outputs bounded between minus one and one. | https://www.tensortonic.com/problems/tanh-activation |
 | Implement Triplet Loss | Compute triplet loss from anchor, positive, and negative embeddings using distances and a margin. | https://www.tensortonic.com/problems/triplet-loss |
 | Block-Pointer Matmul | Implement tiled Triton matrix multiplication with block pointers, boundary checks, and tail-safe loads and stores. | https://www.tensortonic.com/problems/triton-block-pointer-matmul |
