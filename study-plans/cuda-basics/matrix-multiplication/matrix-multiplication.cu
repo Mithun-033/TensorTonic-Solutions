@@ -1,7 +1,7 @@
 #include <cuda_runtime.h>
 #define BM 128
 #define BN 128
-#define BK 8
+#define BK 32
 #define TM 8
 #define TN 8
 
