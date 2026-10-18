@@ -1,9 +1,9 @@
 #include <cuda_runtime.h>
-#define BM 64
-#define BN 64
+#define BM 128
+#define BN 128
 #define BK 8
-#define TM 4
-#define TN 4
+#define TM 8
+#define TN 8
 
 __global__ void matmul_kernel(const float* __restrict__ A,
                              const float* __restrict__ B,
