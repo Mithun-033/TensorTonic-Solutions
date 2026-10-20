@@ -1,12 +1,16 @@
 #include <cuda_runtime.h>
 #include <math.h>
 #define BLOCK_SIZE 256
+#define MAX_ITEMS_PER_THREAD 16
+
 __global__ void layer_norm_kernel(const float* input, const float* gamma, const float* beta, float* output, int M, int N, float eps) {
     __shared__ float s_sum[BLOCK_SIZE];
     __shared__ float sq_sum[BLOCK_SIZE];
     __shared__ float smean;
     __shared__ float s_inv_std;
-    
+
+    float local_inputs[MAX_ITEMS_PER_THREAD];
+    int local_counter = 0;
     int row = blockIdx.x;
     int tid = threadIdx.x;
     float local_sum = 0.0f;
@@ -14,6 +18,7 @@ __global__ void layer_norm_kernel(const float* input, const float* gamma, const 
 
     for(int i = tid; i < N; i += BLOCK_SIZE){
         float val = input[row * N + i];
+        local_inputs[local_counter++] = val;
         local_sum += val;
         local_sq_sum += val * val;
     }
@@ -40,9 +45,10 @@ __global__ void layer_norm_kernel(const float* input, const float* gamma, const 
 
     float mean = smean;
     float inv_std = s_inv_std;
-
+    int local_counter_2 = 0;
+    
     for(int i = tid; i < N; i += BLOCK_SIZE){
-        float v = input[row * N + i];
+        float v = local_inputs[local_counter_2++];
         output[row * N + i] = gamma[i] * (v - mean) * inv_std + beta[i];
     }
     
