@@ -3,7 +3,7 @@
 #define BLOCK_SIZE_M 8
 #define BLOCK_SIZE_N 32
 
-__global__ void gemv_kernel(const float* A, const float* x, float* y, int M, int N) {
+__global__ void gemv_kernel(const float* __restrict__ A, const float* __restrict__ x, float* y, int M, int N) {
     extern __shared__ float s_x[];
 
     int tid = threadIdx.y * BLOCK_SIZE_N + threadIdx.x;
