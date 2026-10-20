@@ -5,7 +5,6 @@
 
 __global__ void gemv_kernel(const float* A, const float* x, float* y, int M, int N) {
     extern __shared__ float s_x[];
-    __shared__ float s_sum[BLOCK_SIZE_M][BLOCK_SIZE_N];
 
     int tid = threadIdx.y * BLOCK_SIZE_N + threadIdx.x;
     int num_threads = BLOCK_SIZE_M * BLOCK_SIZE_N;
@@ -16,26 +15,23 @@ __global__ void gemv_kernel(const float* A, const float* x, float* y, int M, int
     __syncthreads();
 
     int row = blockIdx.x * BLOCK_SIZE_M + threadIdx.y;
-    float sum = 0.0f;
 
     if (row < M) {
+        float sum = 0.0f;
+
+        #pragma unroll 4
         for (int col = threadIdx.x; col < N; col += BLOCK_SIZE_N) {
             sum += A[row * N + col] * s_x[col];
         }
-    }
 
-    s_sum[threadIdx.y][threadIdx.x] = sum;
-    __syncthreads();
-
-    for (int stride = BLOCK_SIZE_N / 2; stride > 0; stride >>= 1) {
-        if (threadIdx.x < stride) {
-            s_sum[threadIdx.y][threadIdx.x] += s_sum[threadIdx.y][threadIdx.x + stride];
+        #pragma unroll
+        for (int stride = BLOCK_SIZE_N >> 1; stride > 0; stride >>= 1) {
+            sum += __shfl_down_sync(0xffffffff, sum, stride);
         }
-        __syncthreads();
-    }
 
-    if (threadIdx.x == 0 && row < M) {
-        y[row] = s_sum[threadIdx.y][0];
+        if (threadIdx.x == 0) {
+            y[row] = sum;
+        }
     }
 }
 
