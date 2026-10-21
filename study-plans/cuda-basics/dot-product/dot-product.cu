@@ -1,9 +1,9 @@
 #include <cuda_runtime.h>
 
-__global__ void dot_kernel(const float* A, const float* B, float* result, int N) {
+__global__ void dot_kernel(const float* __restrict__ A, const float* __restrict__ B, float* __restrict__ result, int N) {
     __shared__ float s[256];
     int tid = threadIdx.x;
-    int i = blockIdx.x * blockDim.x + tid;
+    int i = blockIdx.x * 256 + tid;
 
     float v = 0.0f;
     if (i < N) {
