@@ -1,7 +1,7 @@
 #include <cuda_runtime.h>
 #include <math.h>
 
-__global__ void rms_norm_kernel(const float* input, const float* gamma, float* output, int M, int N, float eps) {
+__global__ void rms_norm_kernel(const float* __restrict__ input, const float* __restrict__ gamma, float* __restrict__ output, int M, int N, float eps) {
     __shared__ float s_sum[256];
     __shared__ float s_inv_rms;
     
@@ -12,12 +12,14 @@ __global__ void rms_norm_kernel(const float* input, const float* gamma, float* o
 
     float local_input[16];
     int counter = 0;
+    
     #pragma unroll
     for(int i = tid; i < N; i += 256){
         float val = start[i];
         local_sum += val * val;
         local_input[counter++] = val;
     }
+    
     counter = 0;
     s_sum[tid] = local_sum;
     __syncthreads();
