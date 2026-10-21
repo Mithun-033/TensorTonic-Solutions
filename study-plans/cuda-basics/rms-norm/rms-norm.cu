@@ -23,6 +23,7 @@ __global__ void rms_norm_kernel(const float* __restrict__ input, const float* __
     s_sum[tid] = local_sum;
     __syncthreads();
 
+    #pragma unroll
     for(int stride = 256 >> 1; stride > 0; stride >>= 1){
         if(tid < stride){
             s_sum[tid] += s_sum[stride + tid];
