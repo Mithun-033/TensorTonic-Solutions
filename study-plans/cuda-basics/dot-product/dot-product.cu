@@ -3,11 +3,10 @@
 __global__ void dot_kernel(const float* __restrict__ A, const float* __restrict__ B, float* __restrict__ result, int N) {
     __shared__ float s[256];
     int tid = threadIdx.x;
-    int i = blockIdx.x * 256 + tid;
 
     float v = 0.0f;
-    if (i < N) {
-        v = A[i] * B[i];
+    for(int i = tid; i < N; i += 256){
+        v += A[i] * B[i]; 
     }
     s[tid] = v;
     __syncthreads();
@@ -27,7 +26,7 @@ __global__ void dot_kernel(const float* __restrict__ A, const float* __restrict_
 
 extern "C" void solve(const float* A, const float* B, float* result, int N) {
     int threads = 256;
-    int blocks = (N + threads - 1) / threads;
+    int blocks = 1;
     cudaMemset(result, 0, sizeof(float));
     dot_kernel<<<blocks, threads>>>(A, B, result, N);
     cudaDeviceSynchronize();
