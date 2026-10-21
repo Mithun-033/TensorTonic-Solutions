@@ -13,7 +13,6 @@ __global__ void rms_norm_kernel(const float* __restrict__ input, const float* __
     float local_input[16];
     int counter = 0;
     
-    #pragma unroll
     for(int i = tid; i < N; i += 256){
         float val = start[i];
         local_sum += val * val;
@@ -38,7 +37,6 @@ __global__ void rms_norm_kernel(const float* __restrict__ input, const float* __
     __syncthreads();
 
     float inv = s_inv_rms;
-    #pragma unroll
     for(int i = tid; i < N; i += 256){
         out_start[i] = local_input[counter++] * inv * gamma[i];
     }
