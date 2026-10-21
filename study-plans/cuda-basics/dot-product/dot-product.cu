@@ -12,7 +12,7 @@ __global__ void dot_kernel(const float* A, const float* B, float* result, int N)
     s[tid] = v;
     __syncthreads();
 
-    
+    #pragma unroll
     for (int st = blockDim.x >> 1; st > 0; st >>= 1) {
         if (tid < st) {
             s[tid] += s[tid + st];
