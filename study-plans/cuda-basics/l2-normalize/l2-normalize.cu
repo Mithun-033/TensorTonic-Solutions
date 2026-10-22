@@ -26,9 +26,23 @@ __global__ void reduce_sq_sum(const float* input, float* sumv, int N) {
 }
 
 __global__ void divide_by_sqrt(const float* input, float* output, const float* sumv, int N) {
-    int tid = blockIdx.x * 256 + threadIdx.x;
-    if(tid  < N){
-    output[tid] = rsqrtf(*sumv) * input[tid];
+    int tid = blockIdx.x * blockDim.x + threadIdx.x;
+    int idx = tid * 4;
+
+    if (idx >= N) return;
+    float inv_sqrt = rsqrtf(*sumv);
+
+    if (idx + 3 < N) {
+        float4 v = reinterpret_cast<const float4*>(input)[tid];
+        v.x *= inv_sqrt;
+        v.y *= inv_sqrt;
+        v.z *= inv_sqrt;
+        v.w *= inv_sqrt;
+        reinterpret_cast<float4*>(output)[tid] = v;
+    } else {
+        for (int i = 0; idx + i < N; ++i) {
+            output[idx + i] = input[idx + i] * inv_sqrt;
+        }
     }
 }
 
